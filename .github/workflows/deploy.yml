@@ -13,7 +13,7 @@ jobs:
       # Build Go server
       - name: Build Go server
         run: |
-          cd server
+          cd server/cmd/chat-server
           go build -o server-binary
 
       # Build React frontend
@@ -23,22 +23,26 @@ jobs:
           npm ci
           npm run build
 
-      # Deploy via SCP + SSH
-      - name: Deploy to Lightsail
+      # Upload files
+      - name: Release files to AWS Lightsail VPS
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           source: "server/server-binary,client/build/*"
-          target: "/home/ubuntu/app"
+          target: "/home/builds/webchat_build_artifacts"
 
-      - name: Restart services
+      # Move files and restart services
+      - name: Deploy and Restart
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            cd /home/ubuntu/app
-            systemctl restart myapp
+            sudo mv /home/builds/webchat_build_artifacts/server/server-binary /opt/bitnami/apps/webchat/bin/server
+            sudo rm -rf /opt/bitnami/nginx/html/*
+            sudo cp -r /home/ubuntu/app/client/build/* /opt/bitnami/nginx/html/
+            sudo systemctl restart webchat
+            sudo /opt/bitnami/ctlscript.sh restart nginx
