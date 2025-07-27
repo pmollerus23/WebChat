@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
-          source: "server/server-binary,client/build/*"
+          source: "server/server-binary,client/dist/*"          
           target: "/home/builds/webchat_build_artifacts"
 
       # Move files and restart services
