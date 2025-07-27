@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 ### Go ###
+=======
+>>>>>>> 415865c (adding .gitignore)
 # Binaries for programs and plugins
 *.exe
 *.exe~
