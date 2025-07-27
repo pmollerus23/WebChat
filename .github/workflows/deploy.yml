@@ -21,6 +21,8 @@ jobs:
       - name: Build frontend
         run: |
           cd client
+          echo "VITE_API_URL=https://flipyourcode.com/api/messages" >> .env.production
+          echo "VITE_WS_URL=https://flipyourcode.com/ws" >> .env.production
           npm ci
           npm run build
 
