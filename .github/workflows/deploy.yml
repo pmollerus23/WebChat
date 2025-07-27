@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            sudo mv /home/bitnami/builds/webchat_build_artifacts/server/server-binary /opt/bitnami/apps/webchat/bin/server
+            sudo mv /home/bitnami/builds/webchat_build_artifacts/server-binary /opt/bitnami/apps/webchat/bin/server
             sudo chmod +x /opt/bitnami/apps/webchat/bin/server
             sudo rm -rf /opt/bitnami/nginx/html/*
             sudo cp -r /home/bitnami/builds/webchat_build_artifacts/client/dist/* /opt/bitnami/nginx/html/
