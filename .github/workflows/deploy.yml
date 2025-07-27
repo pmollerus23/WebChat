@@ -10,11 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Build Go server
       - name: Build Go server
         run: |
           cd server/cmd/chat-server
           go build -o server-binary
+          mv server-binary ../../server-binary
+
 
       # Build React frontend
       - name: Build frontend
