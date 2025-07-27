@@ -1,0 +1,44 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build Go server
+      - name: Build Go server
+        run: |
+          cd server
+          go build -o server-binary
+
+      # Build React frontend
+      - name: Build frontend
+        run: |
+          cd client
+          npm ci
+          npm run build
+
+      # Deploy via SCP + SSH
+      - name: Deploy to Lightsail
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          source: "server/server-binary,client/build/*"
+          target: "/home/ubuntu/app"
+
+      - name: Restart services
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/app
+            systemctl restart myapp
