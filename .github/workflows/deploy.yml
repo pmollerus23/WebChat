@@ -34,23 +34,31 @@ jobs:
           source: "server/server-binary,client/dist/*"          
           target: "/home/bitnami/builds/webchat_build_artifacts"
 
-      - name: Debug file paths on server
+      # - name: Debug file paths on server
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.LIGHTSAIL_HOST }}
+      #     username: ${{ secrets.LIGHTSAIL_USER }}
+      #     key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+      #     script: |
+      #       echo "Files in /home/bitnami/builds/webchat_build_artifacts"
+      #       ls -R /home/bitnami/builds/webchat_build_artifacts
+        
+      # Move files and restart services
+      - name: Deploy and Restart
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            echo "Files in /home/bitnami/builds/webchat_build_artifacts"
-            ls -R /home/bitnami/builds/webchat_build_artifacts
-              
-      # # Move files and restart services
-      # - name: Deploy and Restart
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.LIGHTSAIL_HOST }}
-      #     username: ${{ secrets.LIGHTSAIL_USER }}
-      #     key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+            sudo mv /home/bitnami/builds/webchat_build_artifacts/server/server-binary /opt/bitnami/apps/webchat/bin/server
+            sudo chmod +x /opt/bitnami/apps/webchat/bin/server
+            sudo rm -rf /opt/bitnami/nginx/html/*
+            sudo cp -r /home/bitnami/builds/webchat_build_artifacts/client/dist/* /opt/bitnami/nginx/html/
+            sudo systemctl restart webchat
+            sudo /opt/bitnami/ctlscript.sh restart nginx
+
           
       #     script: |
       #       sudo mv /home/bitnami/builds/webchat_build_artifacts/server-binary /opt/bitnami/apps/webchat/bin/server
