@@ -18,7 +18,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 )
 
 // config.go
@@ -328,11 +327,7 @@ func (h *Hub) Shutdown() {
 
 func main() {
 
-	// Load environment variables once
-	err := godotenv.Load("../../.env")
-	if err != nil {
-		log.Println("No .env file found or failed to load.")
-	}
+	var err error
 
 	// Populate config
 	config = Config{
