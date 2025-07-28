@@ -428,6 +428,7 @@ func main() {
 	// Start the server in a goroutine
 	go func() {
 		log.Println("Server started on 0.0.0.0:" + config.Port)
+		log.Println("chat away!")
 		// if err := http.Serve(l, nil); err != nil {
 		if err := srv.Serve(l); err != nil && err != http.ErrServerClosed {
 			log.Fatal("Serve error:", err)

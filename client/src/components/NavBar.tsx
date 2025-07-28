@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
         backgroundColor: '#581845'
       }}>
         <Typography variant="h6" component="div">
-          FlipNet WebChat
+          FlipNet WebChat Application (in Development)
         </Typography>
       </Toolbar>
     </AppBar>
